@@ -77,7 +77,6 @@ public final class Main extends JavaPlugin implements Listener {
     FireworkMeta fireworkMeta = firework.getFireworkMeta();
 
     // 走った時の花火の設定
-    // スニークした時の花火の設定
     fireworkMeta.addEffect(
         FireworkEffect.builder()
             .withColor(Color.GREEN)
