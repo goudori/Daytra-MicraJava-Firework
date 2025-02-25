@@ -1,0 +1,4 @@
+name: micra_firework
+version: '1.0-SNAPSHOT'
+main: plugin.micra_firework.Main
+api-version: '1.21'
