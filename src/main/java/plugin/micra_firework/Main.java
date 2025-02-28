@@ -1,5 +1,6 @@
 package plugin.micra_firework;
 
+import java.math.BigInteger;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -10,14 +11,14 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin implements Listener {
+
+  private BigInteger num = BigInteger.valueOf(1); // 初期値を1に設定
 
   @Override
   public void onEnable() {
@@ -31,63 +32,31 @@ public final class Main extends JavaPlugin implements Listener {
    */
   @EventHandler
   public void onPlayerToggleSneak(PlayerToggleSneakEvent e) {
-    // イベント発生時のプレイヤーやワールドなどの情報を変数に持つ。
-    Player player = e.getPlayer(); // イベントからプレイヤーの情報を取得する
+    Player player = e.getPlayer(); // プレイヤー取得
+    World world = player.getWorld(); // ワールド取得
 
-    World world = player.getWorld();// プレイヤーがいるワールドの情報を取得する
+    // 現在の素数よりも大きい次の素数を取得
+    num = num.nextProbablePrime();
 
-    // 花火オブジェクトをプレイヤーのロケーション地点に対して出現させる。
-    Firework firework = world.spawn(player.getLocation(), Firework.class);
+    // 素数かどうかを判定する
+    if (num.isProbablePrime(1500)) {
 
-    // 花火オブジェクトが持つメタ情報を取得。
-    FireworkMeta fireworkMeta = firework.getFireworkMeta();
+      // 花火を出す
+      Firework firework = world.spawn(player.getLocation(), Firework.class);
+      FireworkMeta fireworkMeta = firework.getFireworkMeta();
+      fireworkMeta.addEffect(
+          FireworkEffect.builder()
+              .withColor(Color.BLUE, Color.MAROON, Color.GREEN)
+              .with(Type.STAR)
+              .withFlicker()
+              .build()
+      );
+      fireworkMeta.setPower(1);
+      firework.setFireworkMeta(fireworkMeta);
 
-    // メタ情報に対して設定を追加したり、値の上書きを行う。
-    // 今回は花火を打ち上げる。
-
-    // スニークした時の花火の設定
-    fireworkMeta.addEffect(
-        FireworkEffect.builder()
-            .withColor(Color.BLUE, Color.MAROON, Color.GREEN)
-            .with(Type.STAR)
-            .withFlicker()
-            .build());
-    fireworkMeta.setPower(1); //花火の打ち上げの高さ 
-
-    // 追加した情報で再設定する。
-    firework.setFireworkMeta(fireworkMeta);
-
-  }
-
-  /**
-   * プレーヤーが走った時に花火を打ちあげるイベント
-   *
-   * @param e
-   */
-  @EventHandler
-  public void onPlayerRun(PlayerToggleSprintEvent e) {
-    // イベント発生時のプレイヤーやワールドなどの情報を変数に持つ。
-    Player player = e.getPlayer();
-    World world = player.getWorld();
-
-    // 花火オブジェクトをプレイヤーのロケーション地点に対して出現させる。
-    Firework firework = world.spawn(player.getLocation(), Firework.class);
-
-    // 花火オブジェクトが持つメタ情報を取得。
-    FireworkMeta fireworkMeta = firework.getFireworkMeta();
-
-    // 走った時の花火の設定
-    fireworkMeta.addEffect(
-        FireworkEffect.builder()
-            .withColor(Color.GREEN)
-            .with(Type.CREEPER)
-            .withFlicker()
-            .build());
-    fireworkMeta.setPower(1);//花火の打ち上げの高さ
-
-    // 追加した情報で再設定する。
-    firework.setFireworkMeta(fireworkMeta);
-
+      // プレイヤーに素数メッセージを送信
+      player.sendMessage("次の素数 " + num + " です。");
+    }
   }
 
   /**
@@ -99,10 +68,9 @@ public final class Main extends JavaPlugin implements Listener {
   public void onFireworkDamage(EntityDamageByEntityEvent event) {
     Entity fireworkDamager = event.getDamager();
 
-    // プレーヤーに対して花火によるダメージを無効化する
+    // プレイヤーへの花火ダメージを無効化
     if (fireworkDamager instanceof Firework) {
       event.setCancelled(true);
     }
   }
-
 }
