@@ -27,10 +27,10 @@ public final class Main extends JavaPlugin implements Listener {
 
   /**
    * プレイヤーがスニークを開始/終了する際に起動されるイベントハンドラ。
-   * <p>
-   * <p>
+   *
+   *
    * countを増やして、偶数の時に花火を打ち上げる。
-   * <p>
+   *
    * ※奇数の時は花火を打ち上げない
    *
    * @param e イベント
@@ -56,8 +56,6 @@ public final class Main extends JavaPlugin implements Listener {
       fireworkMeta.setPower(2);
       firework.setFireworkMeta(fireworkMeta);
 
-      // スニークが偶数の時に花火を打ち上げているかのメッセージ確認
-      player.sendMessage("偶数の花火は、" + count);
 
     }
     count++; // １ずつ増やす
